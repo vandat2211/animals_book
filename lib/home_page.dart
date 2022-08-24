@@ -1,6 +1,9 @@
+import 'package:animals_book/Deltail_page.dart';
+import 'package:animals_book/get_dacdiem.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:firebase_core/firebase_core.dart';
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -9,6 +12,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+  List<String> docIDs=[];
+  Future getDocID() async {
+    await FirebaseFirestore.instance.collection('animal').get().then((snapshot) => snapshot.docs.forEach((document) {
+      print(document.reference);
+      docIDs.add(document.reference.id);
+    }));
+  }
   @override
   void initState() {
     super.initState();
@@ -60,12 +70,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         topRight: Radius.circular(12),
                         bottomLeft: Radius.circular(0),
                         bottomRight: Radius.circular(0))),
-                margin: const EdgeInsets.only(top: 180, left: 18, right: 18),
+                margin: const EdgeInsets.only(top: 80, left: 18, right: 18),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                        height: 180,
+                        height: 280,
                         decoration: const BoxDecoration(
                             image: DecorationImage(
                               image: ExactAssetImage('assets/images/logo.jpg'),
@@ -74,26 +84,36 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             borderRadius:
                                 BorderRadius.all(Radius.circular(12)))),
                     Container(
-                      height: 400,
-                      child: GridView.builder(
-                          itemCount: 8,
-                          gridDelegate:
+                      height: 420,
+                      child: FutureBuilder(
+                        future: getDocID(),
+                        builder: (context,snapshot) {
+                          return
+                          GridView.builder(
+                              itemCount: docIDs.length,
+                              gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 5,
-                            mainAxisSpacing: 5,
-                            mainAxisExtent: 120,
-                          ),
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: EdgeInsets.all(20.0),
-                              child: Container(
-                                alignment: Alignment.center,
-                                color: Colors.blue,
-                                child: Text("ok"),
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 5,
+                                mainAxisSpacing: 5,
+                                mainAxisExtent: 120,
                               ),
-                            );
-                          }),
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: EdgeInsets.all(20.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (
+                                            context) =>  DeltailPage(animalID: docIDs[index],)),
+                                      );
+                                    },
+                                    child: GetDacDiem(animalId: docIDs[index],)
+                                  ),
+                                );
+                              });
+                        }),
                     )
                   ],
                 ),

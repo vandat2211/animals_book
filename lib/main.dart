@@ -1,7 +1,10 @@
 import 'package:animals_book/home_page.dart';
 import 'package:flutter/material.dart';
-
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+enum Menu { itemOne, itemTwo, itemThree, itemFour }
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 

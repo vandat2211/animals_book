@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1060931717964",
+    "project_id": "animals-book-c3484",
+    "storage_bucket": "animals-book-c3484.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1060931717964:android:8e37aa7bbfa2af6f70dde9",
+        "android_client_info": {
+          "package_name": "com.example.animals_book"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1060931717964-cl1k91i7f5795pc54h7a736q1gch2v09.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAS4R8LydiJhaKbsVdaqtbSEJEc4MBoMHU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1060931717964-cl1k91i7f5795pc54h7a736q1gch2v09.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
