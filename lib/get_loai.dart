@@ -4,22 +4,23 @@ import 'package:flutter/material.dart';
 
 class GetLoai extends StatelessWidget {
  final String animalID;
- final String ddid;
+ final String foodID;
  final String loaiid;
+ final String dvid;
  final String namelaoi;
-  const GetLoai({Key? key, required this.animalID, required this.ddid, required this.loaiid, required this.namelaoi}) : super(key: key);
+  const GetLoai({Key? key, required this.animalID, required this.foodID, required this.loaiid, required this.namelaoi, required this.dvid}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    CollectionReference dd=FirebaseFirestore.instance.collection('animal').doc(animalID).collection('dactinh').doc(ddid).collection('loai').doc(loaiid).collection(namelaoi);
+    CollectionReference dd=FirebaseFirestore.instance.collection('animal').doc(animalID).collection('food').doc(foodID).collection('species').doc(loaiid).collection(namelaoi);
     return FutureBuilder<DocumentSnapshot>(
-        future: dd.doc(loaiid).get(),
+        future: dd.doc(dvid).get(),
         builder: ((context,snapshot){
           if(snapshot.connectionState==ConnectionState.done){
             Map<String,dynamic> data=
             snapshot.data!.data() as Map<String,dynamic>;
             return
-              Text('${data['name_dv']}');
+              Text('${data['name_animal']}');
           }
           return Text("loading...");
         }));

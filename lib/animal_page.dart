@@ -3,16 +3,17 @@ import 'package:animals_book/animal_deltail_page.dart';
 import 'package:animals_book/app_bar.dart';
 import 'package:animals_book/get_l.dart';
 import 'package:animals_book/get_loai.dart';
+import 'package:animals_book/model/species.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class AnimalPage extends StatefulWidget {
   String animalID;
-  String dtID;
+  String foodID;
   String loaiID;
   String nameloai;
 
-  AnimalPage({Key? key, required this.animalID, required this.dtID,required this.loaiID,required this.nameloai})
+  AnimalPage({Key? key, required this.animalID, required this.foodID,required this.loaiID,required this.nameloai})
       : super(key: key);
 
   @override
@@ -21,18 +22,18 @@ class AnimalPage extends StatefulWidget {
 
 class _AnimalPageState extends State<AnimalPage> {
   List<String> docIDs = [];
-  List<String> loaiIDs = [];
+  List<String> list_species = [];
   Future getloai() async {
     await FirebaseFirestore.instance
         .collection('animal')
         .doc(widget.animalID)
-        .collection('dactinh')
-        .doc(widget.dtID)
-        .collection('loai')
+        .collection('food')
+        .doc(widget.foodID)
+        .collection('species')
         .get()
         .then((snapshot) => snapshot.docs.forEach((document) {
               print(document.reference);
-              loaiIDs.add(document.reference.id);
+              list_species.add(document.reference.id);
             }));
   }
 
@@ -40,9 +41,9 @@ class _AnimalPageState extends State<AnimalPage> {
     await FirebaseFirestore.instance
         .collection('animal')
         .doc(widget.animalID)
-        .collection('dactinh')
-        .doc(widget.dtID)
-        .collection('loai')
+        .collection('food')
+        .doc(widget.foodID)
+        .collection('species')
         .doc(widget.loaiID)
         .collection(widget.nameloai)
         .get()
@@ -152,8 +153,8 @@ class _AnimalPageState extends State<AnimalPage> {
                                       children: [
                                         GetLoai(
                                             animalID: widget.animalID,
-                                            ddid: widget.dtID,
-                                            loaiid: docIDs[index], namelaoi: widget.nameloai)
+                                            foodID: widget.foodID,
+                                            loaiid: widget.loaiID, namelaoi: widget.nameloai, dvid: docIDs[index],)
                                       ],
                                     ),
                                   ),
@@ -171,15 +172,15 @@ class _AnimalPageState extends State<AnimalPage> {
                 builder: (context, snapshot) {
                   return ListView.builder(
                       padding: EdgeInsets.zero,
-                      itemCount: loaiIDs.length,
+                      itemCount: list_species.length,
                       itemBuilder: (context, index) {
                         return ListTile(
                           leading: Icon(Icons.access_time_filled),
-                          title: GetL(animalID: widget.animalID, ddid: widget.dtID, loaiid: loaiIDs[index]),
+                          title: GetL(animalID: widget.animalID, foodID: widget.foodID, loaiid: list_species[index],),
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) =>  AnimalPage(animalID:widget.animalID, dtID: widget.dtID, loaiID: loaiIDs[index], nameloai: GetL(animalID: widget.animalID, ddid: widget.dtID, loaiid: loaiIDs[index]).toString(),)),
+                              MaterialPageRoute(builder: (context) =>  AnimalPage(animalID:widget.animalID, foodID: widget.foodID, loaiID: list_species[index], nameloai:list_species[index])),
                             );
                           },
                         );

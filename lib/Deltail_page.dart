@@ -1,6 +1,7 @@
 import 'package:animals_book/animal_page.dart';
 import 'package:animals_book/app_bar.dart';
 import 'package:animals_book/get_dactinh.dart';
+import 'package:animals_book/get_img.dart';
 import 'package:animals_book/resource/color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -13,11 +14,11 @@ class DeltailPage extends StatefulWidget {
 }
 
 class _DeltailPageState extends State<DeltailPage> {
-  List<String> docIDs=[];
+  List<String> list_food=[];
   Future getDocID() async {
-    await FirebaseFirestore.instance.collection('animal').doc(widget.animalID).collection('dactinh').get().then((snapshot) => snapshot.docs.forEach((document) {
+    await FirebaseFirestore.instance.collection('animal').doc(widget.animalID).collection('food').get().then((snapshot) => snapshot.docs.forEach((document) {
       print(document.reference);
-      docIDs.add(document.reference.id);
+      list_food.add(document.reference.id);
     }));
   }
   @override
@@ -45,28 +46,24 @@ class _DeltailPageState extends State<DeltailPage> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(right: 20,left: 20,top: 50,bottom: 20),
+                padding: const EdgeInsets.only(right: 15,left: 15,top: 40,bottom: 20),
                 child: Container(
                   height: 200,
-                    decoration:  BoxDecoration(
-                        color: Colors.white24,
-                        borderRadius:
-                        BorderRadius.circular(10)),
+                  child: GetImg(animalId: widget.animalID,),
                 ),
               ),
-              Container(
-                height: 480,
+              SizedBox(
+                height: 100,
                 child: FutureBuilder(
                   future: getDocID(),
                   builder: (context,snapshot){
                   return GridView.builder(
-                      itemCount: docIDs.length,
+                    scrollDirection: Axis.horizontal,
+                      itemCount: list_food.length,
                       gridDelegate:
                       const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 5,
-                        mainAxisSpacing: 5,
-                        mainAxisExtent: 120,
+                        crossAxisCount: 1,
+                        mainAxisExtent: 150,
                       ),
                       itemBuilder: (context, index) {
                         return Padding(
@@ -75,7 +72,7 @@ class _DeltailPageState extends State<DeltailPage> {
                             onTap: (){
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) =>  AnimalPage(animalID:widget.animalID, dtID: docIDs[index], loaiID: 'XcTmLgjAIp8XVm1uiAt0', nameloai: 'loai su tu',)),
+                                MaterialPageRoute(builder: (context) =>  AnimalPage(animalID:widget.animalID, foodID: list_food[index], loaiID: '', nameloai: '',)),
                               );
                             },
                             child: Container(
@@ -87,7 +84,7 @@ class _DeltailPageState extends State<DeltailPage> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  GetDacTinh(ddId: docIDs[index], animalID: widget.animalID,)
+                                  GetDacTinh(foodID: list_food[index], animalID: widget.animalID,)
                                 ],
                               ),
                             ),
