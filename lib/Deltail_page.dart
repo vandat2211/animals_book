@@ -26,7 +26,7 @@ class _DeltailPageState extends State<DeltailPage> {
     return GestureDetector(
       onTap:  () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        appBar: CustomAppBar(context,title:Text("tren can"),showDefaultBackButton: false,flexibleSpace: Container(
+        appBar: CustomAppBar(context,title:Text('ok'),showDefaultBackButton: false,flexibleSpace: Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage('assets/images/backgroundd.jpg'),
@@ -72,7 +72,7 @@ class _DeltailPageState extends State<DeltailPage> {
                             onTap: (){
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) =>  AnimalPage(animalID:widget.animalID, foodID: list_food[index], loaiID: '', nameloai: '',)),
+                                MaterialPageRoute(builder: (context) =>  AnimalPage(animalID:widget.animalID, foodID: list_food[index], loaiID: 'esrsapu7PJvZO3KKOzSF', nameloai: 'esrsapu7PJvZO3KKOzSF',)),
                               );
                             },
                             child: Container(

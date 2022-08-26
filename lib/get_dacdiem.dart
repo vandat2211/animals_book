@@ -14,20 +14,25 @@ class GetDacDiem extends StatelessWidget {
           if(snapshot.connectionState==ConnectionState.done){
             Map<String,dynamic> data=
                 snapshot.data!.data() as Map<String,dynamic>;
-            return Container(
-              decoration:  BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(
-                      '${data['url_dacdiem']}'),
-                  fit: BoxFit.cover,
-                ),),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment
-                    .center,
-                children: [
-                  Text('${data['name_dacdiem']}')
-                ],
+            final Widget image = Material(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                clipBehavior: Clip.antiAlias,
+                child: Image.network( '${data['url_dacdiem']}',fit: BoxFit.cover,)
+            );
+            return GridTile(
+              footer: Material(
+                color: Colors.transparent,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(8)),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: GridTileBar(
+                  backgroundColor: Colors.black45,
+                  title: Text('${data['name_dacdiem_el']}'),
+                  subtitle: Text('${data['name_dacdiem']}'),
+                ),
               ),
+              child: image,
             );
           }
           return Container();

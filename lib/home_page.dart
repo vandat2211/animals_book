@@ -27,7 +27,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               list_animal.add(document.reference.id);
             }));
   }
-
   @override
   void initState() {
     super.initState();
@@ -48,12 +47,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          // decoration: const BoxDecoration(
-          //   image: DecorationImage(
-          //     image: ExactAssetImage('assets/images/background.png'),
-          //     fit: BoxFit.cover,
-          //   ),
-          // ),
           child: Column(
             children: [
                     Container(
@@ -67,7 +60,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 BorderRadius.all(Radius.circular(12)))),
                     Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.only(top: 5,bottom: 20,left: 10,right: 10),
                           child: FutureBuilder(
                               future: getDocID(),
                               builder: (context, snapshot) {
@@ -76,28 +69,25 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                     gridDelegate:
                                         const SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 2,
-                                      crossAxisSpacing: 5,
-                                      mainAxisSpacing: 5,
-                                      mainAxisExtent: 120,
+                                      crossAxisSpacing: 10,
+                                      mainAxisSpacing: 10,
+                                      childAspectRatio:1,
                                     ),
                                     itemBuilder: (context, index) {
-                                      return Padding(
-                                        padding: EdgeInsets.all(10.0),
-                                        child: GestureDetector(
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        DeltailPage(
-                                                          animalID:
-                                                              list_animal[index],
-                                                        )),
-                                              );
-                                            },
-                                            child: GetDacDiem(animalId: list_animal[index],)
-                                            ),
-                                      );
+                                      return GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DeltailPage(
+                                                        animalID:
+                                                            list_animal[index],
+                                                      )),
+                                            );
+                                          },
+                                          child: GetDacDiem(animalId: list_animal[index],)
+                                          );
                                     });
                               }),
                         )),
