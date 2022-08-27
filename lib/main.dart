@@ -1,3 +1,4 @@
+import 'package:animals_book/form_add_animal.dart';
 import 'package:animals_book/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home:  const HomePage(),
+      home:   HomePage(),
     );
   }
 }

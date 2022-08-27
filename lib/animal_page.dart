@@ -1,8 +1,6 @@
 import 'package:animals_book/Deltail_page.dart';
 import 'package:animals_book/animal_deltail_page.dart';
 import 'package:animals_book/app_bar.dart';
-import 'package:animals_book/get_l.dart';
-import 'package:animals_book/get_loai.dart';
 import 'package:animals_book/model/species.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +10,18 @@ class AnimalPage extends StatefulWidget {
   String foodID;
   String loaiID;
   String nameloai;
+  String url_dacdiem;
+  String name_dacdiem;
+  String name_food;
 
-  AnimalPage({Key? key, required this.animalID, required this.foodID,required this.loaiID,required this.nameloai})
+  AnimalPage(
+      {Key? key,
+      required this.animalID,
+      required this.foodID,
+      required this.loaiID,
+      required this.nameloai,
+      required this.url_dacdiem,
+        required this.name_dacdiem,required this.name_food})
       : super(key: key);
 
   @override
@@ -21,24 +29,16 @@ class AnimalPage extends StatefulWidget {
 }
 
 class _AnimalPageState extends State<AnimalPage> {
-  List<String> docIDs = [];
-  List<String> list_species = [];
-  Future getloai() async {
-    await FirebaseFirestore.instance
+  @override
+  Widget build(BuildContext context) {
+    final Stream<QuerySnapshot> dataStream1 = FirebaseFirestore.instance
         .collection('animal')
         .doc(widget.animalID)
         .collection('food')
         .doc(widget.foodID)
         .collection('species')
-        .get()
-        .then((snapshot) => snapshot.docs.forEach((document) {
-              print(document.reference);
-              list_species.add(document.reference.id);
-            }));
-  }
-
-  Future getDocID() async {
-    await FirebaseFirestore.instance
+        .snapshots();
+    final Stream<QuerySnapshot> dataStream2 = FirebaseFirestore.instance
         .collection('animal')
         .doc(widget.animalID)
         .collection('food')
@@ -46,19 +46,11 @@ class _AnimalPageState extends State<AnimalPage> {
         .collection('species')
         .doc(widget.loaiID)
         .collection(widget.nameloai)
-        .get()
-        .then((snapshot) => snapshot.docs.forEach((document) {
-              print(document.reference);
-              docIDs.add(document.reference.id);
-            }));
-  }
-
-  @override
-  Widget build(BuildContext context) {
+        .snapshots();
     return Scaffold(
         appBar: CustomAppBar(
           context,
-          title: const Text("Dong vat an thit"),
+          title:  Text(widget.name_dacdiem+'(${widget.name_food.toLowerCase()})',style: TextStyle(fontSize: 18),),
           showDefaultBackButton: false,
           flexibleSpace: Container(
             decoration: const BoxDecoration(
@@ -66,11 +58,19 @@ class _AnimalPageState extends State<AnimalPage> {
                     image: AssetImage('assets/images/backgroundd.jpg'),
                     fit: BoxFit.cover)),
           ),
-          leading: IconButton(onPressed: () { Navigator.push(
-            context,
-            MaterialPageRoute(builder: (
-                context) =>  DeltailPage(animalID: widget.animalID,)),
-          ); }, icon: Icon(Icons.arrow_back),),
+          leading: IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DeltailPage(
+                          animalID: widget.animalID,
+                          url_dacdiem: widget.url_dacdiem, from_animal_page: true, name_dacdiem: widget.name_dacdiem,
+                        )),
+              );
+            },
+            icon: Icon(Icons.arrow_back),
+          ),
         ),
         body: Container(
             width: MediaQuery.of(context).size.width,
@@ -115,9 +115,23 @@ class _AnimalPageState extends State<AnimalPage> {
                 ),
                 SizedBox(
                   height: 280,
-                  child: FutureBuilder(
-                      future: getDocID(),
-                      builder: (context, snapshot) {
+                  child: StreamBuilder<QuerySnapshot>(
+                      stream: dataStream2,
+                      builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if(snapshot.hasError){
+
+                        }
+                        if(snapshot.connectionState==ConnectionState.waiting){
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        final List docIDs=[];
+                        snapshot.data!.docs.map((DocumentSnapshot document){
+                          Map a=document.data() as Map<String,dynamic>;
+                          docIDs.add(a);
+                          a['id']=document.id;
+                        }).toList();
                         return GridView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: docIDs.length,
@@ -151,10 +165,7 @@ class _AnimalPageState extends State<AnimalPage> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
-                                        GetLoai(
-                                            animalID: widget.animalID,
-                                            foodID: widget.foodID,
-                                            loaiid: widget.loaiID, namelaoi: widget.nameloai, dvid: docIDs[index],)
+                                    Text('${docIDs[index]['name_animal']}')
                                       ],
                                     ),
                                   ),
@@ -167,25 +178,45 @@ class _AnimalPageState extends State<AnimalPage> {
             )),
         endDrawer: Drawer(
           child: SafeArea(
-            child: FutureBuilder(
-                future: getloai(),
-                builder: (context, snapshot) {
+            child: StreamBuilder<QuerySnapshot>(
+                stream: dataStream1,
+                builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if(snapshot.hasError){
+
+                  }
+                  if(snapshot.connectionState==ConnectionState.waiting){
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  final List list_species=[];
+                  snapshot.data!.docs.map((DocumentSnapshot document){
+                    Map a=document.data() as Map<String,dynamic>;
+                    list_species.add(a);
+                    a['id']=document.id;
+                  }).toList();
                   return ListView.builder(
                       padding: EdgeInsets.zero,
                       itemCount: list_species.length,
                       itemBuilder: (context, index) {
                         return ListTile(
                           leading: Icon(Icons.access_time_filled),
-                          title: GetL(animalID: widget.animalID, foodID: widget.foodID, loaiid: list_species[index],),
+                          title: Text('${list_species[index]['name_species']}'),
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) =>  AnimalPage(animalID:widget.animalID, foodID: widget.foodID, loaiID: list_species[index], nameloai:list_species[index])),
+                              MaterialPageRoute(
+                                  builder: (context) => AnimalPage(
+                                      animalID: widget.animalID,
+                                      foodID: widget.foodID,
+                                      loaiID: list_species[index]['id'],
+                                      nameloai: list_species[index]['id'],
+                                    url_dacdiem: widget.url_dacdiem,
+                                    name_dacdiem: widget.name_dacdiem, name_food: widget.name_food,)),
                             );
                           },
                         );
-                      }
-                      );
+                      });
                 }),
           ),
         ));
