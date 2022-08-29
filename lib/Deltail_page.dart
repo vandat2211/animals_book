@@ -4,18 +4,21 @@ import 'package:animals_book/home_page.dart';
 import 'package:animals_book/resource/color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class DeltailPage extends StatefulWidget {
   bool from_animal_page;
   String animalID;
   String url_dacdiem;
   String name_dacdiem;
+  String describe;
   DeltailPage(
       {Key? key,
       required this.animalID,
       required this.url_dacdiem,
       required this.from_animal_page,
-      required this.name_dacdiem})
+      required this.name_dacdiem,
+        required this.describe})
       : super(key: key);
 
   @override
@@ -28,7 +31,7 @@ class _DeltailPageState extends State<DeltailPage> {
     final Stream<QuerySnapshot> dataStream = FirebaseFirestore.instance
         .collection('animal')
         .doc(widget.animalID)
-        .collection('food')
+        .collection('classify')
         .snapshots();
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -71,9 +74,13 @@ class _DeltailPageState extends State<DeltailPage> {
                     flex: 4,
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
-                      child: Image(
-                        image: NetworkImage(widget.url_dacdiem),
-                        fit: BoxFit.cover,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            image:  DecorationImage(
+                                image:
+                                NetworkImage(widget.url_dacdiem),
+                                fit: BoxFit.cover),
+                            borderRadius: BorderRadius.circular(8)),
                       ),
                     )),
                 Expanded(
@@ -95,100 +102,108 @@ class _DeltailPageState extends State<DeltailPage> {
                           listFood.add(a);
                           a['id'] = document.id;
                         }).toList();
-                        return GridView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: listFood.length,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 1,
-                            ),
-                            itemBuilder: (context, index) {
-                              final Stream<QuerySnapshot> d = FirebaseFirestore
-                                  .instance
-                                  .collection('animal')
-                                  .doc(widget.animalID)
-                                  .collection('food')
-                                  .doc(listFood[index]['id'])
-                                  .collection('species')
-                                  .snapshots();
-                              return Padding(
-                                padding: EdgeInsets.all(20.0),
-                                child: StreamBuilder<QuerySnapshot>(
-                                    stream: d,
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                                      if (snapshot.hasError) {}
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const Center(
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      }
-                                      final List listSpecies = [];
-                                      snapshot.data!.docs
-                                          .map((DocumentSnapshot document) {
-                                        Map a = document.data()
-                                            as Map<String, dynamic>;
-                                        listSpecies.add(a);
-                                        a['id'] = document.id;
-                                      }).toList();
-                                      return GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    AnimalPage(
-                                                      animalID: widget.animalID,
-                                                      foodID: listFood[index]
-                                                          ['id'],
-                                                      loaiID:
-                                                          listSpecies.isNotEmpty
-                                                              ? listSpecies
-                                                                  .first['id']
-                                                              : 'a',
-                                                      nameloai:
-                                                          listSpecies.isNotEmpty
-                                                              ? listSpecies
-                                                                  .first['id']
-                                                              : 'a',
-                                                      url_dacdiem:
-                                                          widget.url_dacdiem,
-                                                      name_dacdiem:
-                                                          widget.name_dacdiem,
-                                                      name_food: listFood[index]
-                                                          ['name_food'],
-                                                    )),
-                                          );
-                                        },
-                                        child: Container(
-                                          decoration: const BoxDecoration(
-                                            image: DecorationImage(
-                                              image: ExactAssetImage(
-                                                  'assets/images/backgroundd.jpg'),
-                                              fit: BoxFit.cover,
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 20,right: 20),
+                          child: GridView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: listFood.length,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 1,
+                                childAspectRatio: 0.5,
+                              ),
+                              itemBuilder: (context, index) {
+                                final Stream<QuerySnapshot> d = FirebaseFirestore
+                                    .instance
+                                    .collection('animal')
+                                    .doc(widget.animalID)
+                                    .collection('classify')
+                                    .doc(listFood[index]['id'])
+                                    .collection('species')
+                                    .snapshots();
+                                return Padding(
+                                  padding: EdgeInsets.only(top: 10.0,right: 20,bottom: 10),
+                                  child: GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AnimalPage(
+                                                        animalID: widget.animalID,
+                                                        foodID: listFood[index]
+                                                            ['id'],
+                                                        loaiID: 'a',
+                                                        nameloai: 'a',
+                                                        url_dacdiem:
+                                                            widget.url_dacdiem,
+                                                        name_dacdiem:
+                                                            widget.name_dacdiem,
+                                                        name_classify: listFood[index]
+                                                            ['name_classify'],
+                                                        describe: widget.describe,
+                                                        url_classify: listFood[index]['url_classify'],
+                                                        describe_classify: listFood[index]['describe_classify'], describe_species: 'a', url_species: 'a', drawer: false, name_species: '',
+                                                      )),
+                                            );
+                                          },
+                                          child: GridTile(
+                                            footer: Material(
+                                              color: Colors.transparent,
+                                              shape: const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.vertical(
+                                                    bottom: Radius.circular(8)),
+                                              ),
+                                              clipBehavior: Clip.antiAlias,
+                                              child: Container(
+                                                height: MediaQuery.of(context).size.width * 0.08,
+                                                child: GridTileBar(
+                                                  backgroundColor: Colors.black45,
+                                                  title: Text(
+                                                      '${listFood[index]['name_classify']}'),
+                                                ),
+                                              ),
                                             ),
+                                            child: Material(
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                    BorderRadius.circular(8)),
+                                                clipBehavior: Clip.antiAlias,
+                                                child: Image.network(
+                                                  '${listFood[index]['url_classify']}',
+                                                  fit: BoxFit.cover,
+                                                )),
                                           ),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                  '${listFood[index]['name_food']}')
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    }),
-                              );
-                            });
+                                        )
+                                );
+                              }),
+                        );
                       }),
                 ),
                 Expanded(
                     flex: 7,
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0,right: 20,bottom: 40),
-                      child: Container(width:MediaQuery.of(context).size.width,color: Colors.white, child: Text("k")),
+                      padding: const EdgeInsets.only(
+                          left: 20.0, right: 20, bottom: 40),
+                      child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12)),
+                          padding: EdgeInsets.all(10),
+                          width: MediaQuery.of(context).size.width,
+                          child: SingleChildScrollView(
+                            child: Html(
+                              data: widget.describe,
+                              style: {
+                                "#": Style(
+                                    textAlign: TextAlign.left,
+                                    fontSize: const FontSize(12),
+                                    fontFamily: "Roboto",
+                                    lineHeight: const LineHeight(1.5))
+                              },
+                            ),
+                          )
+                      ),
                     ))
               ],
             )),

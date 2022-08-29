@@ -34,95 +34,95 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         backgroundColor: Colors.lightBlue.shade100,
-        body: Container(
-          width: double.infinity,
-          height: double.infinity,
-          child: Column(
-            children: [
-              Container(
-                  height: 280,
+        body: Column(
+          children: [
+            Expanded(
+              flex: 4,
+              child: Container(
                   decoration: const BoxDecoration(
                       image: DecorationImage(
                         image: ExactAssetImage('assets/images/logo.jpg'),
                         fit: BoxFit.cover,
                       ),
                       borderRadius: BorderRadius.all(Radius.circular(12)))),
-              Expanded(
-                  child: Padding(
-                padding: const EdgeInsets.only(
-                    top: 5, bottom: 20, left: 10, right: 10),
-                child: StreamBuilder<QuerySnapshot>(
-                    stream: dataStream,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.hasError) {}
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      final List list_animal = [];
-                      snapshot.data!.docs.map((DocumentSnapshot document) {
-                        Map a = document.data() as Map<String, dynamic>;
-                        list_animal.add(a);
-                        a['id'] = document.id;
-                      }).toList();
-                      return GridView.builder(
-                          itemCount: list_animal.length,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            childAspectRatio: 1,
-                          ),
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => DeltailPage(
-                                              animalID: list_animal[index]
-                                                  ['id'],
-                                              url_dacdiem: list_animal[index]
-                                                  ['url_dacdiem'],
-                                              from_animal_page: false,
-                                              name_dacdiem: list_animal[index]['name_dacdiem'],
-                                            )),
-                                  );
-                                },
-                                child: GridTile(
-                                  footer: Material(
-                                    color: Colors.transparent,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                          bottom: Radius.circular(8)),
-                                    ),
-                                    clipBehavior: Clip.antiAlias,
-                                    child: GridTileBar(
-                                      backgroundColor: Colors.black45,
-                                      title: Text(
-                                          '${list_animal[index]['name_dacdiem_el']}'),
-                                      subtitle: Text(
-                                          '${list_animal[index]['name_dacdiem']}'),
-                                    ),
+            ),
+            Expanded(
+              flex: 4,
+                child: Padding(
+              padding: const EdgeInsets.only(
+                  top: 5, bottom: 20, left: 10, right: 10),
+              child: StreamBuilder<QuerySnapshot>(
+                  stream: dataStream,
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.hasError) {}
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    final List list_animal = [];
+                    snapshot.data!.docs.map((DocumentSnapshot document) {
+                      Map a = document.data() as Map<String, dynamic>;
+                      list_animal.add(a);
+                      a['id'] = document.id;
+                    }).toList();
+                    return GridView.builder(
+                        itemCount: list_animal.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 1,
+                        ),
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => DeltailPage(
+                                            animalID: list_animal[index]
+                                                ['id'],
+                                            url_dacdiem: list_animal[index]
+                                                ['url_dacdiem'],
+                                            from_animal_page: false,
+                                            name_dacdiem: list_animal[index]['name_dacdiem'],
+                                            describe: list_animal[index]['describe'],
+                                          )),
+                                );
+                              },
+                              child: GridTile(
+                                footer: Material(
+                                  color: Colors.transparent,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                        bottom: Radius.circular(8)),
                                   ),
-                                  child: Material(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8)),
-                                      clipBehavior: Clip.antiAlias,
-                                      child: Image.network(
-                                        '${list_animal[index]['url_dacdiem']}',
-                                        fit: BoxFit.cover,
-                                      )),
-                                ));
-                          });
-                    }),
-              )),
-            ],
-          ),
+                                  clipBehavior: Clip.antiAlias,
+                                  child: GridTileBar(
+                                    backgroundColor: Colors.black45,
+                                    title: Text(
+                                        '${list_animal[index]['name_dacdiem_el']}'),
+                                    subtitle: Text(
+                                        '${list_animal[index]['name_dacdiem']}'),
+                                  ),
+                                ),
+                                child: Material(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8)),
+                                    clipBehavior: Clip.antiAlias,
+                                    child: Image.network(
+                                      '${list_animal[index]['url_dacdiem']}',
+                                      fit: BoxFit.cover,
+                                    )),
+                              ));
+                        });
+                  }),
+            )),
+          ],
         ),
         bottomNavigationBar: CurvedNavigationBar(
           index: 1,
