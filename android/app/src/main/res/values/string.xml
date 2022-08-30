@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Animals Flutter</string>
+    <string name="facebook_app_id">529400878944427</string>
+    <string name="fb_login_protocol_scheme">fb529400878944427</string>
+    <string name="facebook_client_token">33a8d6150c0da28a4d2ba8eee256ee44</string>
+
+
+
+</resources>

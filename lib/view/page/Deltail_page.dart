@@ -1,7 +1,9 @@
-import 'package:animals_book/animal_page.dart';
+import 'package:animals_book/app_page.dart';
+import 'package:animals_book/view/page/animal_page.dart';
 import 'package:animals_book/app_bar.dart';
-import 'package:animals_book/home_page.dart';
+import 'package:animals_book/view/page/books_page.dart';
 import 'package:animals_book/resource/color.dart';
+import 'package:animals_book/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -12,14 +14,26 @@ class DeltailPage extends StatefulWidget {
   String url_dacdiem;
   String name_dacdiem;
   String describe;
-  DeltailPage(
+  DeltailPage.init(
       {Key? key,
       required this.animalID,
       required this.url_dacdiem,
       required this.from_animal_page,
       required this.name_dacdiem,
-        required this.describe})
+      required this.describe})
       : super(key: key);
+  static Route route(bool from_animal_page, String animalID, String url_dacdiem,
+      String name_dacdiem, String describe) {
+    return Utils.pageRouteBuilder(
+        DeltailPage.init(
+          name_dacdiem: name_dacdiem,
+          describe: describe,
+          animalID: animalID,
+          url_dacdiem: url_dacdiem,
+          from_animal_page: from_animal_page,
+        ),
+        true);
+  }
 
   @override
   State<DeltailPage> createState() => _DeltailPageState();
@@ -49,12 +63,12 @@ class _DeltailPageState extends State<DeltailPage> {
           leading: IconButton(
             onPressed: () {
               if (widget.from_animal_page == true) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomePage()),
-                );
+                Navigator.of(context).pushAndRemoveUntil<void>(
+                    AppPage.route(), (route) => false);
               } else {
-                Navigator.of(context).pop();
+                // Navigator.of(context).pop();
+                Navigator.of(context).pushAndRemoveUntil<void>(
+                    AppPage.route(), (route) => false);
               }
             },
             icon: Icon(Icons.arrow_back),
@@ -76,9 +90,8 @@ class _DeltailPageState extends State<DeltailPage> {
                       padding: const EdgeInsets.all(20.0),
                       child: Container(
                         decoration: BoxDecoration(
-                            image:  DecorationImage(
-                                image:
-                                NetworkImage(widget.url_dacdiem),
+                            image: DecorationImage(
+                                image: NetworkImage(widget.url_dacdiem),
                                 fit: BoxFit.cover),
                             borderRadius: BorderRadius.circular(8)),
                       ),
@@ -103,7 +116,7 @@ class _DeltailPageState extends State<DeltailPage> {
                           a['id'] = document.id;
                         }).toList();
                         return Padding(
-                          padding: const EdgeInsets.only(left: 20,right: 20),
+                          padding: const EdgeInsets.only(left: 20, right: 20),
                           child: GridView.builder(
                               scrollDirection: Axis.horizontal,
                               itemCount: listFood.length,
@@ -113,69 +126,72 @@ class _DeltailPageState extends State<DeltailPage> {
                                 childAspectRatio: 0.5,
                               ),
                               itemBuilder: (context, index) {
-                                final Stream<QuerySnapshot> d = FirebaseFirestore
-                                    .instance
-                                    .collection('animal')
-                                    .doc(widget.animalID)
-                                    .collection('classify')
-                                    .doc(listFood[index]['id'])
-                                    .collection('species')
-                                    .snapshots();
+                                final Stream<QuerySnapshot> d =
+                                    FirebaseFirestore.instance
+                                        .collection('animal')
+                                        .doc(widget.animalID)
+                                        .collection('classify')
+                                        .doc(listFood[index]['id'])
+                                        .collection('species')
+                                        .snapshots();
                                 return Padding(
-                                  padding: EdgeInsets.only(top: 10.0,right: 20,bottom: 10),
-                                  child: GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      AnimalPage(
-                                                        animalID: widget.animalID,
-                                                        foodID: listFood[index]
-                                                            ['id'],
-                                                        loaiID: 'a',
-                                                        nameloai: 'a',
-                                                        url_dacdiem:
-                                                            widget.url_dacdiem,
-                                                        name_dacdiem:
-                                                            widget.name_dacdiem,
-                                                        name_classify: listFood[index]
-                                                            ['name_classify'],
-                                                        describe: widget.describe,
-                                                        url_classify: listFood[index]['url_classify'],
-                                                        describe_classify: listFood[index]['describe_classify'], describe_species: 'a', url_species: 'a', drawer: false, name_species: '',
-                                                      )),
-                                            );
-                                          },
-                                          child: GridTile(
-                                            footer: Material(
-                                              color: Colors.transparent,
-                                              shape: const RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.vertical(
-                                                    bottom: Radius.circular(8)),
-                                              ),
-                                              clipBehavior: Clip.antiAlias,
-                                              child: Container(
-                                                height: MediaQuery.of(context).size.width * 0.08,
-                                                child: GridTileBar(
-                                                  backgroundColor: Colors.black45,
-                                                  title: Text(
-                                                      '${listFood[index]['name_classify']}'),
-                                                ),
-                                              ),
-                                            ),
-                                            child: Material(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(8)),
-                                                clipBehavior: Clip.antiAlias,
-                                                child: Image.network(
-                                                  '${listFood[index]['url_classify']}',
-                                                  fit: BoxFit.cover,
-                                                )),
+                                    padding: const EdgeInsets.only(
+                                        top: 10.0, right: 20, bottom: 10),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context)
+                                            .pushAndRemoveUntil<void>(
+                                                AnimalPage.route(
+                                                    widget.animalID,
+                                                    listFood[index]['id'],
+                                                    'a',
+                                                    'a',
+                                                    widget.url_dacdiem,
+                                                    widget.name_dacdiem,
+                                                    listFood[index]
+                                                        ['name_classify'],
+                                                    widget.describe,
+                                                    listFood[index]
+                                                    ['describe_classify'],
+                                                    listFood[index]
+                                                        ['url_classify'],
+                                                    'a',
+                                                    'a',
+                                                    false,
+                                                    ''),
+                                                (route) => false);
+                                      },
+                                      child: GridTile(
+                                        footer: Material(
+                                          color: Colors.transparent,
+                                          shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.vertical(
+                                                bottom: Radius.circular(8)),
                                           ),
-                                        )
-                                );
+                                          clipBehavior: Clip.antiAlias,
+                                          child: Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.08,
+                                            child: GridTileBar(
+                                              backgroundColor: Colors.black45,
+                                              title: Text(
+                                                  '${listFood[index]['name_classify']}'),
+                                            ),
+                                          ),
+                                        ),
+                                        child: Material(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8)),
+                                            clipBehavior: Clip.antiAlias,
+                                            child: Image.network(
+                                              '${listFood[index]['url_classify']}',
+                                              fit: BoxFit.cover,
+                                            )),
+                                      ),
+                                    ));
                               }),
                         );
                       }),
@@ -202,8 +218,7 @@ class _DeltailPageState extends State<DeltailPage> {
                                     lineHeight: const LineHeight(1.5))
                               },
                             ),
-                          )
-                      ),
+                          )),
                     ))
               ],
             )),

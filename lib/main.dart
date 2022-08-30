@@ -1,5 +1,7 @@
 import 'package:animals_book/form_add_animal.dart';
-import 'package:animals_book/home_page.dart';
+import 'package:animals_book/view/page/books_page.dart';
+import 'package:animals_book/view/login/login_page.dart';
+import 'package:animals_book/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 enum Menu { itemOne, itemTwo, itemThree, itemFour }
@@ -21,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home:   HomePage(),
+      home:  MainPage(),
     );
   }
 }
