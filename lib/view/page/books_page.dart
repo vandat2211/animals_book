@@ -84,7 +84,7 @@ class _BooksPageState extends State<BooksPage> with WidgetsBindingObserver {
                               return GestureDetector(
                                   onTap: () {
                                     Navigator.of(context)
-                                        .pushAndRemoveUntil<void>(
+                                        .push<void>(
                                             DeltailPage.route(
                                                 false,
                                                 list_animal[index]['id'],
@@ -93,7 +93,7 @@ class _BooksPageState extends State<BooksPage> with WidgetsBindingObserver {
                                                 list_animal[index]
                                                     ['name_dacdiem'],
                                                 list_animal[index]['describe']),
-                                            (route) => false);
+                                           );
                                  },
                                   child: GridTile(
                                     footer: Material(

@@ -124,10 +124,15 @@ class _AnimalPageState extends State<AnimalPage> {
           ),
           leading: IconButton(
             onPressed: () {
-              Navigator.of(context).pushAndRemoveUntil<void>(
-                  DeltailPage.route(true, widget.animalID, widget.url_dacdiem,
-                      widget.name_dacdiem, widget.describe),
-                  (route) => false);
+              Navigator.of(context)
+                  .push<void>(
+                DeltailPage.route(
+                    true,
+                    widget.animalID,
+                    widget.url_dacdiem,
+                    widget.name_dacdiem,
+                    widget.describe),
+              );
             },
             icon: Icon(Icons.arrow_back),
           ),
@@ -228,11 +233,18 @@ class _AnimalPageState extends State<AnimalPage> {
                                       top: 8.0, bottom: 8),
                                   child: GestureDetector(
                                       onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const AnimalDeltailPage()),
+                                        Navigator.of(context)
+                                            .push<void>(
+                                            AnimalDeltailPage.route(
+                                                widget.animalID,
+                                                widget.foodID,
+                                              widget.loaiID,
+                                                widget.nameloai,
+                                                docIDs[index]['id'],
+                                              widget.name_dacdiem,
+                                              docIDs[index]['name_animal'],
+                                              docIDs[index]['des_animal'],
+                                              ),
                                         );
                                       },
                                       child: GridTile(
@@ -338,7 +350,7 @@ class _AnimalPageState extends State<AnimalPage> {
                                       '${list_species[index]['name_species']}'),
                                   onTap: () async {
                                     Navigator.of(context)
-                                        .pushAndRemoveUntil<void>(
+                                        .push<void>(
                                         AnimalPage.route(
                                             widget.animalID,
                                             widget.foodID,
@@ -359,7 +371,7 @@ class _AnimalPageState extends State<AnimalPage> {
                                             true,
                                             list_species[index]
                                             ['name_species']),
-                                            (route) => false);
+                                            );
                                   },
                                 );
                               })),

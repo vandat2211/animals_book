@@ -1,3 +1,5 @@
+import 'package:animals_book/resource/assets.dart';
+import 'package:animals_book/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -54,16 +56,23 @@ bool passwordConfirm(){
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
+      body: Utils.bkavCheckOrientation(
+        context,
+         SingleChildScrollView(
+           child: Container(
+             width: MediaQuery.of(context).size.width,
+             height: MediaQuery.of(context).size.height,
+             decoration: const BoxDecoration(
+               image: DecorationImage(
+                   image: AssetImage(ImageAsset.loginBackgroundd),
+                   fit: BoxFit.cover),
+             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
                   "Hello There",
-                  style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold,color: Colors.white),
                 ),
                 const SizedBox(
                   height: 10,
@@ -71,7 +80,7 @@ bool passwordConfirm(){
                 const Text(
                   'Register below with your details!',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 20,color: Colors.white
                   ),
                 ),
                 const SizedBox(
@@ -206,7 +215,7 @@ bool passwordConfirm(){
                     child: Container(
                       padding: const EdgeInsets.all(15),
                       decoration: BoxDecoration(
-                          color: Colors.deepPurple,
+                          color: Colors.green.shade700,
                           borderRadius: BorderRadius.circular(12)),
                       child: const Center(
                           child: Text(
@@ -240,8 +249,8 @@ bool passwordConfirm(){
                 )
               ],
             ),
-          ),
         ),
+         ),
       ),
     );
   }

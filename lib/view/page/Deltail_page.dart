@@ -66,9 +66,7 @@ class _DeltailPageState extends State<DeltailPage> {
                 Navigator.of(context).pushAndRemoveUntil<void>(
                     AppPage.route(), (route) => false);
               } else {
-                // Navigator.of(context).pop();
-                Navigator.of(context).pushAndRemoveUntil<void>(
-                    AppPage.route(), (route) => false);
+                Navigator.of(context).pop();
               }
             },
             icon: Icon(Icons.arrow_back),
@@ -140,7 +138,7 @@ class _DeltailPageState extends State<DeltailPage> {
                                     child: GestureDetector(
                                       onTap: () {
                                         Navigator.of(context)
-                                            .pushAndRemoveUntil<void>(
+                                            .push<void>(
                                                 AnimalPage.route(
                                                     widget.animalID,
                                                     listFood[index]['id'],
@@ -159,7 +157,7 @@ class _DeltailPageState extends State<DeltailPage> {
                                                     'a',
                                                     false,
                                                     ''),
-                                                (route) => false);
+                                                );
                                       },
                                       child: GridTile(
                                         footer: Material(

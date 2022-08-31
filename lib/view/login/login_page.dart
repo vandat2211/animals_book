@@ -39,11 +39,12 @@ class _LoginPageState extends State<LoginPage> {
     final prefs = await SharedPreferences.getInstance();
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-    final OAuthCredential credential = GoogleAuthProvider.credential(
+    final  credential = GoogleAuthProvider.credential(
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
     await prefs.setString('TokenGoogle', googleAuth!.accessToken!);
+    print("ok2:  ${googleAuth.accessToken}");
     return await FirebaseAuth.instance.signInWithCredential(credential);
 
   }
@@ -171,7 +172,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: GestureDetector(
+                    child: InkWell(
                       onTap: signIn,
                       child: Container(
                         padding: const EdgeInsets.all(15),
@@ -217,9 +218,14 @@ class _LoginPageState extends State<LoginPage> {
                           height: 40,
                           child: GestureDetector(
                             onTap:(){signInWithGoogle().then((UserCredential value) {
+                              User? user=value.user;
                                 final name=value.user!.displayName;
                                 final email=value.user!.email;
-                                addUserDetail(name!,name,email!,20);
+                                if(user!=null){
+                                  if(value.additionalUserInfo!.isNewUser){
+                                    addUserDetail(name!,name,email!,20);
+                                  }
+                                }
                             });} ,
                             child: Image(image: AssetImage(ImageAsset.imageGoogle),),
                           ),
@@ -230,9 +236,14 @@ class _LoginPageState extends State<LoginPage> {
                         height: 40,
                         child: GestureDetector(
                           onTap:(){signInWithFacebook().then((value) {
+                            User? user=value.user;
                             final name=value.user!.displayName;
                             final email=value.user!.email;
-                            addUserDetail(name!,name,email!,20);
+                            if(user!=null){
+                              if(value.additionalUserInfo!.isNewUser){
+                                addUserDetail(name!,name,email!,20);
+                              }
+                            }
                           });} ,
                           child: Image(image: AssetImage(ImageAsset.imageFacebook),),
                         ),
