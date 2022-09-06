@@ -53,12 +53,13 @@ class _LoginPageState extends State<LoginPage> {
     final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(loginResult.accessToken!.token);
     return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
   }
-  Future addUserDetail(String firstName,String lastName,String email,int age)async{
-    await FirebaseFirestore.instance.collection('users').add({
+  Future addUserDetail(String firstName,String lastName,String email,int age,String user_url)async{
+    await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).set({
       'first name':firstName,
       'last name':lastName,
       'email':email,
-      'age':age
+      'age':age,
+      'user_url':user_url,
     });
   }
   @override
@@ -221,9 +222,10 @@ class _LoginPageState extends State<LoginPage> {
                               User? user=value.user;
                                 final name=value.user!.displayName;
                                 final email=value.user!.email;
+                                final userurl=value.user!.photoURL;
                                 if(user!=null){
                                   if(value.additionalUserInfo!.isNewUser){
-                                    addUserDetail(name!,name,email!,20);
+                                    addUserDetail(name!,name,email!,20,userurl!);
                                   }
                                 }
                             });} ,
@@ -239,9 +241,10 @@ class _LoginPageState extends State<LoginPage> {
                             User? user=value.user;
                             final name=value.user!.displayName;
                             final email=value.user!.email;
+                            final userurl=value.user!.photoURL;
                             if(user!=null){
                               if(value.additionalUserInfo!.isNewUser){
-                                addUserDetail(name!,name,email!,20);
+                                addUserDetail(name!,name,email!,20,userurl!);
                               }
                             }
                           });} ,

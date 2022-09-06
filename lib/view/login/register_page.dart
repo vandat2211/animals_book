@@ -34,15 +34,16 @@ class _RegisterPageState extends State<RegisterPage> {
     await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passworddController.text.trim());
-    addUserDetail(_firstNameController.text.trim(), _lastNameController.text.trim(), _emailController.text.trim(), int.parse(_ageController.text.trim()));
+    addUserDetail(_firstNameController.text.trim(), _lastNameController.text.trim(), _emailController.text.trim(), int.parse(_ageController.text.trim()),"");
   }
   }
-  Future addUserDetail(String firstName,String lastName,String email,int age)async{
-    await FirebaseFirestore.instance.collection('users').add({
+  Future addUserDetail(String firstName,String lastName,String email,int age,String user_url)async{
+    await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).set({
       'first name':firstName,
       'last name':lastName,
       'email':email,
-      'age':age
+      'age':age,
+      'user_url':user_url
     });
   }
 bool passwordConfirm(){
