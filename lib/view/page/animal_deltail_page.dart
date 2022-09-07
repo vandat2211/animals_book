@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 class AnimalDeltailPage extends StatefulWidget {
-   AnimalDeltailPage.init({Key? key,required this.animalID,required this.nameloai,required this.loaiID,required this.foodID,required this.nameloaiID,required this.namedacdiem,required this.name_animal,required this.des_animal}) : super(key: key);
+   AnimalDeltailPage.init({Key? key,required this.animalID,required this.nameloai,required this.loaiID,required this.foodID,required this.nameloaiID,required this.namedacdiem,required this.name_animal,required this.des_animal,required this.url_animal}) : super(key: key);
   static Route route(
       String animalID,
    String foodID,
@@ -17,8 +17,9 @@ class AnimalDeltailPage extends StatefulWidget {
       String namedacdiem,
       String name_animal,
       String des_animal,
+      String url_animal
      ){
-    return Utils.pageRouteBuilder(AnimalDeltailPage.init(animalID: animalID, nameloai: nameloai, loaiID: loaiID, foodID: foodID, nameloaiID: nameloaiID, namedacdiem: namedacdiem, name_animal: name_animal, des_animal:des_animal,), true);
+    return Utils.pageRouteBuilder(AnimalDeltailPage.init(animalID: animalID, nameloai: nameloai, loaiID: loaiID, foodID: foodID, nameloaiID: nameloaiID, namedacdiem: namedacdiem, name_animal: name_animal, des_animal:des_animal, url_animal: url_animal,), true);
   }
   String animalID;
   String foodID;
@@ -28,6 +29,7 @@ class AnimalDeltailPage extends StatefulWidget {
   String namedacdiem;
   String name_animal;
   String des_animal;
+  String url_animal;
   @override
   State<AnimalDeltailPage> createState() => _AnimalDeltailPageState();
 }
@@ -94,7 +96,18 @@ class _AnimalDeltailPageState extends State<AnimalDeltailPage> {
                      imagelist.add(a);
                      a['id'] = document.id;
                    }).toList();
-                   return Column(
+                   return imagelist.isEmpty?
+                   Padding(
+                     padding: const EdgeInsets.only(left:8.0,right:10,top:20,bottom:20),
+                     child: Container(
+                       decoration: BoxDecoration(
+                           image: DecorationImage(
+                               image: NetworkImage(widget.url_animal),
+                               fit: BoxFit.cover),
+                           borderRadius: BorderRadius.circular(8)),
+                     ),
+                   )
+                   :Column(
                      children: [
                        CarouselSlider.builder(
                          options: CarouselOptions(

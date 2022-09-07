@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage>{
               a['id'] = document.id;
             }).toList();
             return Container(
-              margin: const EdgeInsets.only(top: 20),
+              margin: const EdgeInsets.only(top: 20,bottom: 10),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: Expanded(

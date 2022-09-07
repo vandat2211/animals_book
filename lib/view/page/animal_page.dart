@@ -226,6 +226,7 @@ class _AnimalPageState extends State<AnimalPage> {
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
+                                    mainAxisSpacing: 10
                               ),
                               itemBuilder: (context, index) {
                                 return Padding(
@@ -244,6 +245,7 @@ class _AnimalPageState extends State<AnimalPage> {
                                               widget.name_dacdiem,
                                               docIDs[index]['name_animal'],
                                               docIDs[index]['des_animal'],
+                                              docIDs[index]['url_animal'],
                                               ),
                                         );
                                       },
