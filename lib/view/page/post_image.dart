@@ -25,7 +25,7 @@ class _PostImageState extends State<PostImage> {
   Future _getData()async{
     await FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.uid).get().then((snapshot)async{
       if(snapshot.exists){
-       name= snapshot.data()!["first name"];
+       name= snapshot.data()!["user_name"];
        email= snapshot.data()!["email"];
        user_url= snapshot.data()!["user_url"];
       }
@@ -65,16 +65,27 @@ class _PostImageState extends State<PostImage> {
                     itemCount: image.length+1,
                     itemBuilder: (context,index){
                       return index==0?
-                          Center(
-                            child: IconButton(
-                              icon: Icon(Icons.add),
-                              onPressed: (){
-                                  getMultipImage();
-                                },
+                          Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: InkWell(
+                              onTap: (){ getMultipImage();},
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white60,
+                                  borderRadius: BorderRadius.circular(20)
+                                ),
+                                child: const Center(
+                                  child: Icon(Icons.add,size: 40,)
                             ),
+                              )
+                            )
                           ):Padding(
                             padding: const EdgeInsets.all(2.0),
-                            child: Image.file(File(image[index-1].path),fit: BoxFit.cover,),
+                            child: InkWell(onTap: (){
+                              setState((){
+                              image.removeAt(index-1);
+                            });
+                              },child: ClipRRect(borderRadius:BorderRadius.circular(20),child: Image.file(File(image[index-1].path),fit: BoxFit.cover,))),
                           );
                     }),
               ),
@@ -86,7 +97,7 @@ class _PostImageState extends State<PostImage> {
                     TextFormField(
                       maxLines: 5,
                       minLines: 3,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Description',border: OutlineInputBorder()
                       ),
                     ),

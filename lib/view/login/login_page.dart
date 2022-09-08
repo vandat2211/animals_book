@@ -53,10 +53,9 @@ class _LoginPageState extends State<LoginPage> {
     final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(loginResult.accessToken!.token);
     return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
   }
-  Future addUserDetail(String firstName,String lastName,String email,int age,String user_url)async{
+  Future addUserDetail(String Name,String email,int age,String user_url)async{
     await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).set({
-      'first name':firstName,
-      'last name':lastName,
+      'user_name':Name,
       'email':email,
       'age':age,
       'user_url':user_url,
@@ -225,7 +224,7 @@ class _LoginPageState extends State<LoginPage> {
                                 final userurl=value.user!.photoURL;
                                 if(user!=null){
                                   if(value.additionalUserInfo!.isNewUser){
-                                    addUserDetail(name!,name,email!,20,userurl!);
+                                    addUserDetail(name!,email!,20,userurl!);
                                   }
                                 }
                             });} ,
@@ -244,7 +243,7 @@ class _LoginPageState extends State<LoginPage> {
                             final userurl=value.user!.photoURL;
                             if(user!=null){
                               if(value.additionalUserInfo!.isNewUser){
-                                addUserDetail(name!,name,email!,20,userurl!);
+                                addUserDetail(name!,email!,20,userurl!);
                               }
                             }
                           });} ,
