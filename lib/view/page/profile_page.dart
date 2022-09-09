@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:animals_book/app_bar.dart';
 import 'package:animals_book/resource/assets.dart';
 import 'package:animals_book/utils.dart';
@@ -9,11 +11,16 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key,}) : super(key: key);
+   ProfilePage({Key? key, this.user_url}) : super(key: key);
+  static Future<Route> route() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? url=prefs.getString("user_url");
+    return Utils.pageRouteBuilder(ProfilePage(user_url:url,), false);
+  }
+  String? user_url;
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
-
 class _ProfilePageState extends State<ProfilePage> {
   String? name='';
   String? email='';
@@ -39,6 +46,8 @@ class _ProfilePageState extends State<ProfilePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.getString("TokenGoogle");
     print("tokengoogle : ${prefs.getString("TokenGoogle")}");
+    prefs.getString("user_url");
+    print("user_url : ${prefs.getString("user_url")}");
   }
   @override
   Widget build(BuildContext context) {

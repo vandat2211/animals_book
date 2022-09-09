@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:animals_book/utils.dart';
+import 'package:animals_book/view/page/home_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -58,8 +59,9 @@ class _PostImageState extends State<PostImage> {
         padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 10),
         child: Column(
           children: [
+            SizedBox(height: 10,),
             Expanded(
-              flex: 2,
+              flex: 7,
               child: Container(
                 child: GridView.builder(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
                     itemCount: image.length+1,
@@ -91,28 +93,44 @@ class _PostImageState extends State<PostImage> {
               ),
             ),
             Expanded(
-              flex: 3,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      maxLines: 5,
-                      minLines: 3,
-                      decoration: const InputDecoration(
-                        labelText: 'Description',border: OutlineInputBorder()
-                      ),
-                    ),
-                    SizedBox(height: 10,),
-                    ElevatedButton(onPressed: () async {
-                      for(int i=0;i<image.length;i++){
-                       String url=await uploadFile(image[i]);
-                       downloadUrls.add(url);
-                       if(i==image.length-1){
-                         storeEntry(downloadUrls);
-                       }
-                      }
-                    }, child: Text("Upload"))
-                  ],
-                )),
+              flex: 1,
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0,vertical: 20),
+                    child: InkWell(
+                        onTap: ()async {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Center(child: CircularProgressIndicator());
+                              });
+                          for(int i=0;i<image.length;i++){
+                            String url=await uploadFile(image[i]);
+                            downloadUrls.add(url);
+                            if(i==image.length-1){
+                              storeEntry(downloadUrls);
+                            }
+                          }
+                          Navigator.of(context).pop();
+                        }
+                        ,
+                        child:
+                        Container(
+                          padding: const EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                              color: Colors.green.shade700,
+                              borderRadius: BorderRadius.circular(12)),
+                          child: const Center(
+                              child: Text(
+                                'Upload',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              )),
+                        )
+                    )
+                ),
+                ),
 
           ],
         ),
@@ -132,13 +150,15 @@ class _PostImageState extends State<PostImage> {
     final storageRef=FirebaseStorage.instance.ref();
     Reference ref=storageRef.child('picture/${DateTime.now().microsecondsSinceEpoch}.jpg');
     final uploadTask=ref.putFile(file,metaData);
-  final taskSnapshot=await uploadTask.whenComplete(() {
+  final taskSnapshot=await uploadTask.whenComplete((
+      ) {
    });
     String url=await taskSnapshot.ref.getDownloadURL();
   return url;
  }
   storeEntry(List<String> imageurls){
     FirebaseFirestore.instance.collection('post_image').add({
+      'user_id':FirebaseAuth.instance.currentUser!.uid,
       'user_url':user_url,
       'user_name':name,
       'user_mail':email,

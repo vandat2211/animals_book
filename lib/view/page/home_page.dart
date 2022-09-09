@@ -1,18 +1,35 @@
+import 'package:animals_book/utils.dart';
 import 'package:animals_book/view/page/post_image.dart';
 import 'package:animals_book/view/page/show_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+  static Route route() {
+    return Utils.pageRouteBuilder(HomePage(), false);
+  }
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage>{
+  bool like=false;
+  @override
+  void initState() {
+    init();
+    super.initState();
+  }
+  Future<void> init() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.getString("name");
+    print("name : ${prefs.getString("name")}");
+  }
   @override
   Widget build(BuildContext context) {
     final Stream<QuerySnapshot> gettt =
@@ -68,6 +85,8 @@ class _HomePageState extends State<HomePage>{
                             mainAxisExtent: 250),
                     itemCount: list_image.length,
                     itemBuilder: (context, index) {
+                      final Stream<QuerySnapshot> get =
+                      FirebaseFirestore.instance.collection('post_image').doc(list_image[index]['id']).collection('favorite').snapshots();
                       final List list=list_image[index]['url_image'];
                       return Container(
                         decoration: BoxDecoration(
@@ -111,30 +130,57 @@ class _HomePageState extends State<HomePage>{
                                   const Spacer(
                                     flex: 2,
                                   ),
-                                  InkWell(
-                                    onTap: () {},
-                                    child: Padding(
-                                      padding:
-                                          const EdgeInsets.all(8),
-                                      child: Container(
-                                        width: 100,
-                                        decoration: BoxDecoration(
-                                            color:
-                                                Colors.pink.shade400,
-                                            borderRadius:
-                                                BorderRadius.circular(
-                                                    12)),
-                                        child: const Center(
-                                            child: Text(
-                                          'Follow',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight:
-                                                  FontWeight.bold),
-                                        )),
-                                      ),
-                                    ),
-                                  ),
+                                  StreamBuilder<QuerySnapshot>(
+                                    stream: get,
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                                      if (snapshot.hasError) {}
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                        return const Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                      }
+                                      final List_favorie  = [];
+                                      snapshot.data!.docs.map((DocumentSnapshot document) {
+                                        Map a = document.data() as Map<String, dynamic>;
+                                        List_favorie.add(a);
+                                        a['id'] = document.id;
+                                      }).toList();
+                                      return
+                                      Row(
+                                        children: [
+                                          Text(List_favorie.length.toString()),
+                                          IconButton(onPressed: () {
+                                            for (int i = 0; i <=
+                                                List_favorie.length; i++) {
+                                              if(List_favorie.isEmpty){
+                                                setState((){like=true;});
+                                                FirebaseFirestore.instance.collection(
+                                                    'post_image').doc(
+                                                    list_image[index]['id']).collection(
+                                                    'favorite').doc(
+                                                    FirebaseAuth.instance.currentUser!
+                                                        .uid).set({
+                                                  'like': true
+                                                });
+                                              }
+                                              else
+                                                if (List_favorie[i]['id'] ==
+                                                    FirebaseAuth.instance.currentUser!
+                                                        .uid) {
+                                                  setState((){like=false;});
+                                                  FirebaseFirestore.instance
+                                                      .collection('post_image').doc(
+                                                      list_image[index]['id']).collection('favorite').doc(List_favorie[i]['id']).delete();
+                                                }
+
+                                            }
+                                          },
+                                              icon:like?const Icon(Icons.favorite,color: Colors.red,): const Icon(Icons.favorite_border,
+                                                color: Colors.pink,)),
+                                        ],
+                                      );
+                                    })
                                 ],
                               ),
                             ),
@@ -142,7 +188,7 @@ class _HomePageState extends State<HomePage>{
                             Expanded(
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: Colors.lightBlue.shade100,
                                   borderRadius: BorderRadius.circular(12)
                                 ),
                                   child:list.length==1?
@@ -196,22 +242,25 @@ class _HomePageState extends State<HomePage>{
                                         ]),
                                     itemCount: list.length,
                                     itemBuilder: (context,index){
-                                     return InkWell(
-                                       onTap: (){
-                                         Navigator.of(context)
-                                             .push<void>(
-                                             ShowImage.route(
-                                                 list[index]
-                                             ));
-                                       },
-                                       child: ClipRRect(
-                                         borderRadius:
-                                         BorderRadius
-                                             .circular(
-                                             12.0),
-                                         child: Image.network(
-                                           list[index],
-                                           fit: BoxFit.cover,
+                                     return Padding(
+                                       padding: const EdgeInsets.all(3.0),
+                                       child: InkWell(
+                                         onTap: (){
+                                           Navigator.of(context)
+                                               .push<void>(
+                                               ShowImage.route(
+                                                   list[index]
+                                               ));
+                                         },
+                                         child: ClipRRect(
+                                           borderRadius:
+                                           BorderRadius
+                                               .circular(
+                                               12.0),
+                                           child: Image.network(
+                                             list[index],
+                                             fit: BoxFit.cover,
+                                           ),
                                          ),
                                        ),
                                      );},

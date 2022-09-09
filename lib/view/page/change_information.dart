@@ -1,8 +1,11 @@
 
 import 'dart:io';
 
+import 'package:animals_book/app_bar.dart';
+import 'package:animals_book/app_page.dart';
 import 'package:animals_book/resource/assets.dart';
 import 'package:animals_book/utils.dart';
+import 'package:animals_book/view/page/profile_page.dart';
 import 'package:animals_book/view/page/show_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,6 +31,7 @@ String? image;
 }
 
 class _ChangeInfoState extends State<ChangeInfo> {
+  bool isloading=false;
   File? image;
 Future pickImage(ImageSource source)async{
  try {
@@ -53,7 +57,9 @@ Future pickImage(ImageSource source)async{
         child: ListBody(
           children: [
             InkWell(
-              onTap: (){pickImage(ImageSource.camera);Navigator.of(context).pop();},
+              onTap: (){
+                pickImage(ImageSource.camera);Navigator.of(context).pop();
+                },
               splashColor: Colors.purpleAccent,
               child: Row(
                 children: const [
@@ -127,6 +133,14 @@ Future<ImageSource?> showImageSource(BuildContext context)async{
     await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).update({
       'user_url':img_new
     });
+   var query= await FirebaseFirestore.instance.collection('post_image').where('user_id',isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+    .get();
+   for(var doc in query.docs){
+     await doc.reference.update({
+       'user_url':img_new
+     });
+   }
+
   }
   final _name = TextEditingController();
   final _age = TextEditingController();
@@ -146,6 +160,23 @@ Future<ImageSource?> showImageSource(BuildContext context)async{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(
+        context,
+        title: Text("Thay doi thong tin "),
+        showDefaultBackButton: false,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('assets/images/backgroundd.jpg'),
+                  fit: BoxFit.cover)),
+        ),
+        leading: IconButton(
+          onPressed: () {
+              Navigator.of(context).pop();
+            },
+          icon: Icon(Icons.arrow_back),
+        ),
+      ),
       body: Utils.bkavCheckOrientation(context, Center(
         child: Container(
           width: MediaQuery.of(context).size.width,
@@ -227,22 +258,32 @@ Future<ImageSource?> showImageSource(BuildContext context)async{
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: InkWell(
-                  onTap: ()async{uploadImage(image!);},
-                  child: Container(
-                    padding: const EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                        color: Colors.green.shade700,
-                        borderRadius: BorderRadius.circular(12)),
-                    child: const Center(
-                        child: Text(
-                          'Update',
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
-                        )),
-                  ),
-                ),
+                  onTap: ()async {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return Center(child: CircularProgressIndicator());
+                        });
+                    await uploadImage(image!);
+                    Navigator.of(context).pop();
+                    }
+                  ,
+                    child:
+                    Container(
+                      padding: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                          color: Colors.green.shade700,
+                          borderRadius: BorderRadius.circular(12)),
+                      child: const Center(
+                          child: Text(
+                            'Update',
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          )),
+                    )
+                )
               ),
             ],
           ),
