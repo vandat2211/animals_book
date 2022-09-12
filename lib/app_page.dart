@@ -37,8 +37,8 @@ class _AppPageState extends State<AppPage> {
   }
   int _currentIndex = 1;
   final tabs = [
-    const HomePage(),
-    const BooksPage(),
+     HomePage(),
+     const BooksPage(),
      ProfilePage()
   ];
   @override

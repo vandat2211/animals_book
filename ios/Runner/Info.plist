@@ -2,6 +2,22 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+
+<key>CFBundleURLTypes</key>
+<array>
+  <dict>
+  <key>CFBundleURLSchemes</key>
+  <array>
+    <string>fb529400878944427</string>
+  </array>
+  </dict>
+</array>
+<key>FacebookAppID</key>
+<string>529400878944427</string>
+<key>FacebookClientToken</key>
+<string>33a8d6150c0da28a4d2ba8eee256ee44</string>
+<key>FacebookDisplayName</key>
+<string>Animals Flutter</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -45,5 +61,14 @@
 	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.1060931717964-62s4siijak1b0ctb8e7rgiqm6lcm21md</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

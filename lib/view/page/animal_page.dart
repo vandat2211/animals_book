@@ -158,7 +158,7 @@ class _AnimalPageState extends State<AnimalPage> {
                       child: Column(
                         children: [
                           Expanded(
-                            flex: 2,
+                            flex: 3,
                             child: Container(
                               decoration: BoxDecoration(
                                   image: DecorationImage(
@@ -198,7 +198,7 @@ class _AnimalPageState extends State<AnimalPage> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Expanded(
@@ -210,7 +210,7 @@ class _AnimalPageState extends State<AnimalPage> {
                           if (snapshot.hasError) {}
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return Center(
+                            return const Center(
                               child: CircularProgressIndicator(),
                             );
                           }

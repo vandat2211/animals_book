@@ -10,16 +10,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
-  static Route route() {
+  static Future<Route> route() async {
     return Utils.pageRouteBuilder(HomePage(), false);
   }
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage>{
-  bool like=false;
+bool like=false;
   @override
   void initState() {
     init();
@@ -29,6 +28,7 @@ class _HomePageState extends State<HomePage>{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.getString("name");
     print("name : ${prefs.getString("name")}");
+
   }
   @override
   Widget build(BuildContext context) {
@@ -150,11 +150,10 @@ class _HomePageState extends State<HomePage>{
                                       Row(
                                         children: [
                                           Text(List_favorie.length.toString()),
-                                          IconButton(onPressed: () {
+                                          IconButton(onPressed: () async {
                                             for (int i = 0; i <=
                                                 List_favorie.length; i++) {
                                               if(List_favorie.isEmpty){
-                                                setState((){like=true;});
                                                 FirebaseFirestore.instance.collection(
                                                     'post_image').doc(
                                                     list_image[index]['id']).collection(
@@ -163,17 +162,29 @@ class _HomePageState extends State<HomePage>{
                                                         .uid).set({
                                                   'like': true
                                                 });
+                                                like=true;
                                               }
-                                              else
-                                                if (List_favorie[i]['id'] ==
+                                              else{ if(List_favorie[i]['id'] !=
+                                                  FirebaseAuth.instance.currentUser!
+                                                      .uid){
+                                                FirebaseFirestore.instance.collection(
+                                                    'post_image').doc(
+                                                    list_image[index]['id']).collection(
+                                                    'favorite').doc(
                                                     FirebaseAuth.instance.currentUser!
-                                                        .uid) {
-                                                  setState((){like=false;});
-                                                  FirebaseFirestore.instance
-                                                      .collection('post_image').doc(
-                                                      list_image[index]['id']).collection('favorite').doc(List_favorie[i]['id']).delete();
-                                                }
-
+                                                        .uid).set({
+                                                  'like': true
+                                                });
+                                                like=List_favorie[i]['like'];
+                                              }
+                                              else{
+                                                FirebaseFirestore.instance
+                                                    .collection('post_image').doc(
+                                                    list_image[index]['id']).collection('favorite').doc(FirebaseAuth.instance.currentUser!
+                                                    .uid).delete();
+                                                like=false;
+                                              }
+                                              }
                                             }
                                           },
                                               icon:like?const Icon(Icons.favorite,color: Colors.red,): const Icon(Icons.favorite_border,
